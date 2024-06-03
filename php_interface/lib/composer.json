@@ -1,0 +1,10 @@
+{
+    "name": "tutmirleid/lib",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Tutmirleid\\Lib\\": "../src/app"
+        }
+    },
+    "require": {}
+}
