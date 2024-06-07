@@ -110,13 +110,13 @@ class Users extends AbstractMethods
             }
             $query .= implode(",", $setProperties);
 
-            if (!empty($filter)) {
-                $filterParamsString = $this->parseFilters($filter);
-                $query .= " WHERE " . trim($filterParamsString);
-            } else {
+            if (empty($filter)) {
                 error_log("Error while updating user: filter cannot be empty");
                 return false;
             }
+
+            $filterParamsString = $this->parseFilters($filter);
+            $query .= " WHERE " . trim($filterParamsString);
 
             $allValues = array_merge($values, array_values($filter));
 
@@ -138,13 +138,13 @@ class Users extends AbstractMethods
         try {
             $query = "DELETE FROM users";
 
-            if (!empty($filter)) {
-                $filterParamsString = $this->parseFilters($filter);
-                $query .= " WHERE " . trim($filterParamsString);
-            } else {
+            if (empty($filter)) {
                 error_log("Error while deleting user: filter cannot be empty");
                 return false;
             }
+
+            $filterParamsString = $this->parseFilters($filter);
+            $query .= " WHERE " . trim($filterParamsString);
 
             $q = $this->connection->prepare($query);
 
