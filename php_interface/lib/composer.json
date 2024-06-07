@@ -1,10 +1,12 @@
 {
-    "name": "tutmirleid/lib",
-    "type": "project",
-    "autoload": {
-        "psr-4": {
-            "Tutmirleid\\Lib\\": "../src/app"
-        }
-    },
-    "require": {}
+  "config": {
+    "platform": {
+      "php": "8.2"
+    }
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "../src/App"
+    }
+  }
 }
