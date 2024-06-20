@@ -1,13 +1,26 @@
 <?php
-include "./mysql/config.php";
-include "./mysql/methods/delete.php";
+
+use App\DB\MySQL\Methods\Delete;
+
+require_once $_SERVER["DOCUMENT_ROOT"] . "/crud/header.php";
+?>
+
+<?php
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $user = deleteUser($_POST["id"]);
+    $userID = $_POST["id"];
 
-    if ($user) {
+    $deleteUser = Delete::deleteUser($userID);
+
+    if ($deleteUser) {
         header("Location: index.php");
-    } else {
-        print "Что-то пошло не так";
+    } {
+        print("Smth went wrong...");
     }
 }
+
+?>
+
+<?php
+require_once $_SERVER["DOCUMENT_ROOT"] . "/crud/footer.php";
+?>

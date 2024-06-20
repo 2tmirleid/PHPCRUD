@@ -2,6 +2,8 @@
 
 namespace App\DB\Base;
 
+use App\DB\MySQL\Credentials;
+
 abstract class AbstractConnection
 {
     protected string $host;
@@ -9,5 +11,5 @@ abstract class AbstractConnection
     protected string $username;
     protected string $password;
 
-    abstract protected function createConnection(): object;
+    abstract protected function createConnection(Credentials $credentials): object;
 }

@@ -6,5 +6,7 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Utils\\' => array($baseDir . '/../../crud/Utils'),
+    'MySQL\\' => array($baseDir . '/../../crud/MySQL'),
     'App\\' => array($baseDir . '/../src/App'),
 );

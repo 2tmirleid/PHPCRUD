@@ -1,51 +1,54 @@
-<?php include "header.php";
-include "./mysql/config.php";
-include "./mysql/methods/select.php";
+<?php
+
+use App\DB\MySQL\Methods\Select;
+
+require_once $_SERVER["DOCUMENT_ROOT"] . "/crud/header.php";
 ?>
 
 <?php
-    $users = selectAllUsers();
+$users = Select::selectAllUsers();
 ?>
 
-<body>
-<div class="container">
-    <table>
-        <thead>
-        <tr>
-            <th>Почта</th>
-            <th>Имя</th>
-            <th>Возраст</th>
-            <th>Действия</th>
-        </tr>
-        </thead>
-        <tbody>
-        <?php while ($row = $users->fetch()) { ?>
-        <tr>
-            <!-- email -->
-            <td><?php print "$row[email]" ?></td>
-            <!-- name -->
-            <td><?php print "$row[name]" ?></td>
-            <!-- age -->
-            <td><?php print "$row[age]" ?></td>
-            <!-- actions -->
-            <td>
-                <form action="update.php" method="GET" style="display: inline;">
-                    <input type="hidden" name="id" value="<?php echo $row["_id"]; ?>">
-                    <button type="submit">Изменить</button>
-                </form>
-                <form action="delete.php" method="POST" style="display: inline;">
-                    <input type="hidden" name="id" value="<?php echo $row["_id"]; ?>">
-                    <button type="submit">Удалить</button>
-                </form>
-            </td>
-        </tr>
-        <?php } ?>
-        </tbody>
-    </table>
-    <form action="create.php" style="display: inline;">
-        <button type="submit">Добавить</button>
-    </form>
-</div>
-</body>
+    <main>
+        <div class="container">
+            <h2>Users List</h2>
+            <table class="user-table">
+                <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php
+                foreach ($users as $user) { ?>
+                    <tr>
+                        <td><?= $user["email"] ?></td>
+                        <td><?= $user["name"] ?></td>
+                        <td><?= $user["age"] ?></td>
+                        <td>
+                            <form action="update.php" method="GET">
+                                <input type="hidden" name="id" value="<?= $user["id"]; ?>">
+                                <button class="action-btn edit">Изменить</button>
+                            </form>
+                            <form action="delete.php" method="POST">
+                                <input type="hidden" name="id" value="<?= $user["id"]; ?>">
+                                <button class="action-btn delete">Удалить</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <?php
+                } ?>
+                </tbody>
+            </table>
+            <button class="add-btn">
+                <a href="create.php">Добавить</a>
+            </button>
+        </div>
+    </main>
 
-<?php include "footer.php"; ?>
+<?php
+require_once $_SERVER["DOCUMENT_ROOT"] . "/crud/footer.php";
+?>

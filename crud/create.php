@@ -1,50 +1,56 @@
-<?php include "header.php";
-include "./mysql/config.php";
-include "./mysql/methods/select.php";
-include "./mysql/methods/insert.php";
-include "validateCreateForm.php";
+<?php
+
+use App\DB\MySQL\Methods\Create;
+use App\Utils\Validation;
+
+require_once $_SERVER["DOCUMENT_ROOT"] . "/crud/header.php";
 ?>
 
-<body>
-<div class="container">
-    <form action="create.php" method="POST" class="create">
-        <label>
-            <span>Почта</span>
-            <input type="email" placeholder="test@test.test" name="email"/>
-        </label>
-        <label>
-            <span>Имя</span>
-            <input type="text" placeholder="Valeriy" name="name">
-        </label>
-        <label>
-            <span>Возраст</span>
-            <input type="text" placeholder="21" name="age">
-        </label>
-        <label>
-            <input type="submit" value="Добавить">
-        </label>
-    </form>
-</div>
-</body>
+<main>
+    <div class="container">
+        <h2>Добавить пользователя</h2>
+        <form action="create.php" method="POST" class="user-form">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="age">Age:</label>
+                <input type="number" id="age" name="age" required>
+            </div>
+            <button type="submit" class="submit-btn">Создать</button>
+        </form>
+    </div>
+</main>
 
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $errors = validateCreateForm($_POST);
+    $email = $_POST["email"];
+    $name = $_POST["name"];
+    $age = $_POST["age"];
 
-    if (count($errors) > 0) {
+    $errors = Validation::validateForm(age: $age, email: $email);
+
+    if (!empty($errors)) {
         foreach ($errors as $error) {
-            print "$error<br>";
+            print $error;
         }
     } else {
-        $user = insertUser($_POST);
+        $user = Create::createUser(email: $email, name: $name, age: $age);
 
         if ($user) {
             header("Location: index.php");
         } else {
-            print "Что-то пошло не так...";
+            print "Smth went wrong...";
         }
     }
 }
 ?>
 
-<?php include "footer.php" ?>
+<?php
+require_once $_SERVER["DOCUMENT_ROOT"] . "/crud/footer.php";
+?>

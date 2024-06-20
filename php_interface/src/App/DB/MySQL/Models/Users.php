@@ -2,34 +2,30 @@
 
 namespace App\DB\MySQL\Models;
 
-use App\DB\Methods\AbstractMethods;
+use App\DB\MySQL\Credentials;
+use App\DB\MySQL\Methods\AbstractMethods;
 
 class Users extends AbstractMethods
 {
     private \PDO $connection;
 
     /**
-     * @param string $host
-     * @param string $dbname
-     * @param string $username
-     * @param string $password
+     * @param Credentials $credentials
      */
     public function __construct(
-        protected string $host,
-        protected string $dbname,
-        protected string $username,
-        protected string $password,
+        Credentials $credentials
     ) {
-        $this->connection = $this->createConnection();
+        $this->connection = $this->createConnection($credentials);
     }
 
     /**
+     * @param Credentials $credentials
      * @return \PDO
      */
-    protected function createConnection(): \PDO
+    protected function createConnection(Credentials $credentials): \PDO
     {
         try {
-            $conn = new \PDO("mysql:host=$this->host;dbname=$this->dbname", $this->username, $this->password);
+            $conn = new \PDO("mysql:host=$credentials->host;dbname=$credentials->dbname", $credentials->username, $credentials->password);
             $conn->setAttribute($conn::ATTR_ERRMODE, $conn::ERRMODE_EXCEPTION);
 
             return $conn;
@@ -70,9 +66,11 @@ class Users extends AbstractMethods
                 return false;
             } else {
                 $sql = "INSERT INTO users (email, name, age) VALUES (?, ?, ?)";
-                $query = $this->connection->prepare($sql);
 
-                return $query->execute($values);
+                $query = $this->connection->prepare($sql);
+                $query->execute($values);
+
+                return true;
             }
         } catch (\PDOException $exception) {
             error_log("Error while creating user: " . $exception->getMessage());
@@ -121,8 +119,9 @@ class Users extends AbstractMethods
             $allValues = array_merge($values, array_values($filter));
 
             $q = $this->connection->prepare($query);
+            $q->execute($allValues);
 
-            return $q->execute($allValues);
+            return true;
         } catch (\PDOException $exception) {
             error_log("Error while updating user: " . $exception->getMessage());
             return false;
@@ -147,8 +146,9 @@ class Users extends AbstractMethods
             $query .= " WHERE " . trim($filterParamsString);
 
             $q = $this->connection->prepare($query);
+            $q->execute(array_values($filter));
 
-            return $q->execute(array_values($filter));
+            return true;
         } catch (\PDOException $exception) {
             error_log("Error while deleting user: " . $exception->getMessage());
             return false;
