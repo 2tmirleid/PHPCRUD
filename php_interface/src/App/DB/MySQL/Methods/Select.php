@@ -3,36 +3,40 @@ namespace App\DB\MySQL\Methods;
 
 use App\DB\MySQL\Credentials;
 use App\DB\MySQL\Models\Users;
+use App\DB\MySQL\Singleton;
 
 class Select
 {
-    private static $conn;
+    use Singleton;
+    private $conn;
 
-    private static function init()
+    private function __construct()
     {
-        if (self::$conn === null) {
-            self::$conn = new Users(
-                new Credentials()
-            );
-        }
+        $this->conn = new Users(
+            new Credentials()
+        );
     }
 
     /**
      * @return array
      */
-    public static function selectAllUsers(): array
+    public function selectAllUsers(): array
     {
-        self::init();
-        return self::$conn->select(select: ["id", "email", "name", "age"]);
+        return $this->conn->select(select: ["id", "email", "name", "age"]);
+
     }
 
     /**
      * @param string $email
      * @return array
      */
-    public static function selectUserByEmail(string $email): array
+    public function selectUserByEmail(string $email): array // Это не смотри, я пока не доделал
     {
-        self::init();
-        return self::$conn->select(select: ["email"], filter: ["email" => [$email]]);
+        return $this->conn->select(select: ["email"], filter: ["email" => [$email]]);
+    }
+
+    public function searchUserByValue(string $value): array
+    {
+        return $this->conn->searchUserByValue(value: $value); // TODO validate values
     }
 }

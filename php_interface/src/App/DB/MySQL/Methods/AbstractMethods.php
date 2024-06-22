@@ -15,23 +15,23 @@ abstract class AbstractMethods extends AbstractConnection
 
     /**
      * @param array $values
-     * @return bool
+     * @return bool|\PDOStatement
      */
-    abstract public function create(array $values): bool;
+    abstract public function create(array $values): bool | \PDOStatement;
 
     /**
      * @param array $properties
      * @param array $filter
      * @param array $values
-     * @return bool
+     * @return bool|\PDOStatement
      */
-    abstract public function update(array $properties, array $filter, array $values): bool;
+    abstract public function update(array $properties, array $filter, array $values): bool | \PDOStatement;
 
     /**
      * @param array $filter
-     * @return bool
+     * @return bool|\PDOStatement
      */
-    abstract public function delete(array $filter): bool;
+    abstract public function delete(array $filter): bool | \PDOStatement;
 
     /**
      * @param array $filter

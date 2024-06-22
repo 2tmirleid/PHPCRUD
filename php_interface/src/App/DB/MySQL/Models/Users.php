@@ -4,10 +4,12 @@ namespace App\DB\MySQL\Models;
 
 use App\DB\MySQL\Credentials;
 use App\DB\MySQL\Methods\AbstractMethods;
+use PDO;
+use PDOStatement;
 
 class Users extends AbstractMethods
 {
-    private \PDO $connection;
+    private PDO $connection;
 
     /**
      * @param Credentials $credentials
@@ -20,13 +22,18 @@ class Users extends AbstractMethods
 
     /**
      * @param Credentials $credentials
-     * @return \PDO
+     * @return PDO
      */
-    protected function createConnection(Credentials $credentials): \PDO
+    protected function createConnection(Credentials $credentials): PDO
     {
         try {
-            $conn = new \PDO("mysql:host=$credentials->host;dbname=$credentials->dbname", $credentials->username, $credentials->password);
+            $conn = new PDO(
+                "mysql:host=$credentials->host;dbname=$credentials->dbname",
+                $credentials->username,
+                $credentials->password
+            );
             $conn->setAttribute($conn::ATTR_ERRMODE, $conn::ERRMODE_EXCEPTION);
+            $conn->setAttribute($conn::MYSQL_ATTR_FOUND_ROWS, true);
 
             return $conn;
         } catch (\Throwable $error) {
@@ -47,30 +54,29 @@ class Users extends AbstractMethods
 
         if (!empty($filter)) {
             $filterParamsString = $this->parseFilters($filter);
-            $query .= " WHERE " . trim($filterParamsString);
+            $query .= " WHERE " . $filterParamsString;
         }
         $users = $this->connection->query($query);
 
-        return $users->fetchAll(\PDO::FETCH_ASSOC);
+        return $users->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
      * @param array $values
-     * @return bool
+     * @return bool|PDOStatement
      */
-    public function create(array $values): bool
+    public function create(array $values): bool|PDOStatement
     {
         try {
             if (count($values) != 3) {
-                error_log("Error while creating user: The number of values does not match the number of fields");
-                return false;
+                throw new \InvalidArgumentException("Error while creating user: The number of values does not match the number of fields");
             } else {
                 $sql = "INSERT INTO users (email, name, age) VALUES (?, ?, ?)";
 
                 $query = $this->connection->prepare($sql);
-                $query->execute($values);
+                $query->execute(array_map("trim", $values));
 
-                return true;
+                return $query;
             }
         } catch (\PDOException $exception) {
             error_log("Error while creating user: " . $exception->getMessage());
@@ -82,73 +88,66 @@ class Users extends AbstractMethods
      * @param array $properties
      * @param array $filter
      * @param array $values
-     * @return bool
+     * @return bool|PDOStatement
      */
-    public function update(array $properties, array $filter, array $values): bool
+    public function update(array $properties, array $filter, array $values): bool|PDOStatement
     {
-        try {
-            $requiredProperties = ["email", "name", "age"];
-            $query = "UPDATE users SET";
+        $requiredProperties = ["email", "name", "age"];
+        $query = "UPDATE users SET ";
 
-            foreach ($properties as $property) {
-                if (!in_array($property, $requiredProperties)) {
-                    error_log("Error while updating user: there is no column with name $property");
-                    return false;
-                }
+        $propertiesDiff = array_diff($properties, $requiredProperties);
+
+        if (!empty($propertiesDiff)) {
+                throw new \InvalidArgumentException(
+                    "Error while updating user: invalid column name or count of properties and values does not match"
+                );
             }
 
-            if (count($properties) != count($values)) {
-                error_log("Error while updating user: count of properties and values does not match");
-                return false;
-            }
+        if (count($properties) === 1) {
+            $implodedProps = array_shift($properties);
 
-            $setProperties = [];
-            foreach ($properties as $property) {
-                $setProperties[] = " $property = ?";
-            }
-            $query .= implode(",", $setProperties);
+            $implodedProps .= " = ? ";
+        } else {
+            $implodedProps = implode(" = ?, ", $properties);
 
-            if (empty($filter)) {
-                error_log("Error while updating user: filter cannot be empty");
-                return false;
-            }
-
-            $filterParamsString = $this->parseFilters($filter);
-            $query .= " WHERE " . trim($filterParamsString);
-
-            $allValues = array_merge($values, array_values($filter));
-
-            $q = $this->connection->prepare($query);
-            $q->execute($allValues);
-
-            return true;
-        } catch (\PDOException $exception) {
-            error_log("Error while updating user: " . $exception->getMessage());
-            return false;
+            $query .= rtrim($implodedProps, ",");
         }
+
+        if (empty($filter)) {
+            throw new \InvalidArgumentException("Error while updating user: filter cannot be empty");
+        }
+
+        $filterParamsString = $this->parseFilters($filter);
+        $query .= " WHERE " . $filterParamsString;
+
+        $allValues = array_merge($values, array_values($filter));
+
+        $q = $this->connection->prepare($query);
+        $q->execute($allValues);
+
+        return $q;
     }
 
     /**
      * @param array $filter
-     * @return bool
+     * @return bool|PDOStatement
      */
-    public function delete(array $filter): bool
+    public function delete(array $filter): bool|PDOStatement
     {
         try {
             $query = "DELETE FROM users";
 
             if (empty($filter)) {
-                error_log("Error while deleting user: filter cannot be empty");
-                return false;
+                throw new \InvalidArgumentException("Error while deleting user: filter cannot be empty");
             }
 
             $filterParamsString = $this->parseFilters($filter);
-            $query .= " WHERE " . trim($filterParamsString);
+            $query .= " WHERE " . $filterParamsString;
 
             $q = $this->connection->prepare($query);
             $q->execute(array_values($filter));
 
-            return true;
+            return $q;
         } catch (\PDOException $exception) {
             error_log("Error while deleting user: " . $exception->getMessage());
             return false;
@@ -174,6 +173,8 @@ class Users extends AbstractMethods
             }
         }
 
-        return implode(" AND ", $filterParams);
+        $filterParamsString = implode(" AND ", $filterParams);
+
+        return trim($filterParamsString);
     }
 }

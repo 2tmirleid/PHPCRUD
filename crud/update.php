@@ -7,7 +7,19 @@ require_once $_SERVER["DOCUMENT_ROOT"] . "/crud/header.php";
 ?>
 
 <?php
-$userID = $_GET["id"];
+$userID = intval($_GET["id"]);
+
+//if (!intval($userID = $_GET["id"])) { С проверкой неувязочка получилась - она запускается не только при редиректе с главной, но и при выполнении скрипта, соответственно,
+//    $errorID = "                      ошибка есть всегда.
+//    <main>
+//    <div class='container'>
+//    <h2>ID can't be empty</h2>
+//    </div>
+//    </main>
+//    ";
+//
+//    die($errorID);
+//}
 ?>
 
 <main>
@@ -38,27 +50,44 @@ $userID = $_GET["id"];
 <?php
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $validator = new Validation();
+
     $field = $_POST["field"];
     $value = $_POST["new_value"];
-    $userID = $_POST["id"];
+    $userID = intval($_POST["id"]);
 
     if ($field == "age") {
-        $age = $value;
+        $age = intval($value);
 
-        $errors = Validation::validateForm(age: $age);
+        $errors = $validator->validateForm(age: $age);
+    }
 
-        if (!empty($errors)) {
-            foreach ($errors as $error) {
-                print "$error";
-            }
+    if ($field == "email") {
+        $errors = $validator->validateForm(email: $value);
+    }
+
+    if (!empty($errors)) {
+        foreach ($errors as $error) {
+            print "$error";
         }
+
     } else {
-        $updateUser = Update::updateUser(field: $field, filter: $userID, value: $value);
+        $update = Update::getInstance();
+
+        $updateUser = $update->updateUser(field: $field, filter: $userID, value: $value);
 
         if ($updateUser) {
             header("Location: index.php");
         } else {
-            print "Smth went wrong...";
+            $error = "
+                <main>
+                <div class='container'>
+                <h2>Smth went wrong...</h2>
+                </div>
+                </main>
+            ";
+
+            die($error);
         }
     }
 }

@@ -29,23 +29,35 @@ require_once $_SERVER["DOCUMENT_ROOT"] . "/crud/header.php";
 
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $create = Create::getInstance();
+
+    $validator = new Validation();
+
     $email = $_POST["email"];
     $name = $_POST["name"];
-    $age = $_POST["age"];
+    $age = intval($_POST["age"]);
 
-    $errors = Validation::validateForm(age: $age, email: $email);
+    $errors = $validator->validateForm(age: $age, email: $email);
 
     if (!empty($errors)) {
         foreach ($errors as $error) {
             print $error;
         }
     } else {
-        $user = Create::createUser(email: $email, name: $name, age: $age);
+        $user = $create->createUser(email: $email, name: $name, age: $age);
 
         if ($user) {
             header("Location: index.php");
         } else {
-            print "Smth went wrong...";
+            $error = "
+                <main>
+                <div class='container'>
+                <h2>Smth went wrong...</h2>
+                </div>
+                </main>
+            ";
+
+            die($error);
         }
     }
 }

@@ -4,29 +4,32 @@ namespace App\DB\MySQL\Methods;
 
 use App\DB\MySQL\Credentials;
 use App\DB\MySQL\Models\Users;
+use App\DB\MySQL\Singleton;
 
 class Delete
 {
-    private static $conn;
+    use Singleton;
+    private $conn;
 
-    private static function init(): void
+    private function __construct()
     {
-        if (self::$conn === null) {
-            self::$conn = new Users(
-                new Credentials()
-            );
-        }
+        $this->conn = new Users(
+            new Credentials()
+        );
     }
-
     /**
-     * @param string $id
+     * @param int $id
      * @return bool
      */
-    public static function deleteUser(string $id): bool
+    public function deleteUser(int $id): bool
     {
         try {
-            self::init();
-            self::$conn->delete(["id" => $id]);
+            $deleteUser = $this->conn->delete(["id" => $id]);
+            $rowCount = $deleteUser->rowCount();
+
+            if ($rowCount <= 0) {
+                return false;
+            }
 
             return true;
         } catch (\PDOException $exception) {

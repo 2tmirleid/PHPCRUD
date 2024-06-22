@@ -8,14 +8,24 @@ require_once $_SERVER["DOCUMENT_ROOT"] . "/crud/header.php";
 <?php
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $userID = $_POST["id"];
+    $delete = Delete::getInstance();
 
-    $deleteUser = Delete::deleteUser($userID);
+    $userID = intval($_POST["id"]);
+
+    $deleteUser = $delete->deleteUser($userID);
 
     if ($deleteUser) {
         header("Location: index.php");
     } {
-        print("Smth went wrong...");
+        $error = "
+                <main>
+                <div class='container'>
+                <h2>Smth went wrong...</h2>
+                </div>
+                </main>
+            ";
+
+        die($error);
     }
 }
 

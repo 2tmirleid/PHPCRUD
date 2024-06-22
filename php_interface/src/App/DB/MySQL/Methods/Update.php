@@ -4,18 +4,18 @@ namespace App\DB\MySQL\Methods;
 
 use App\DB\MySQL\Credentials;
 use App\DB\MySQL\Models\Users;
+use App\DB\MySQL\Singleton;
 
 class Update
 {
-    private static $conn;
+    use Singleton;
+    private $conn;
 
-    private static function init(): void
+    private function __construct()
     {
-        if (self::$conn === null) {
-            self::$conn = new Users(
-                new Credentials()
-            );
-        }
+        $this->conn = new Users(
+            new Credentials()
+        );
     }
 
     /**
@@ -24,16 +24,21 @@ class Update
      * @param string $value
      * @return bool
      */
-    public static function updateUser(string $field, string $filter, string $value): bool
+    public function updateUser(string $field, string $filter, string $value): bool
     {
         try {
-            self::init();
-            self::$conn->update(properties: [$field], filter: ["id" => $filter], values: [$value]);
+            $updateUser = $this->conn->update(properties: [$field], filter: ["id" => $filter], values: [$value]);
+            $rowCount = $updateUser?->rowCount();
+
+            if ($rowCount <= 0) {
+                return false;
+            }
 
             return true;
-        } catch (\PDOException $exception) {
+        } catch (\Throwable $exception) {
             error_log("Error while updating user: " . $exception->getMessage());
-            return false;
         }
+
+        return false;
     }
 }

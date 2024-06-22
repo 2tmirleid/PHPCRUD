@@ -4,31 +4,35 @@ namespace App\DB\MySQL\Methods;
 
 use App\DB\MySQL\Credentials;
 use App\DB\MySQL\Models\Users;
+use App\DB\MySQL\Singleton;
 
 class Create
 {
-    private static $conn;
+    use Singleton;
+    private $conn;
 
-    private static function init(): void
+    private function __construct()
     {
-        if (self::$conn === null) {
-            self::$conn = new Users(
-                new Credentials()
-            );
-        }
+        $this->conn = new Users(
+            new Credentials()
+        );
     }
 
     /**
      * @param string $email
      * @param string $name
-     * @param string $age
+     * @param int $age
      * @return bool
      */
-    public static function createUser(string $email, string $name, string $age): bool
+    public function createUser(string $email, string $name, int $age): bool
     {
         try {
-            self::init();
-            self::$conn->create([$email, $name, $age]);
+            $createUser = $this->conn->create([$email, $name, $age]);
+            $rowCount = $createUser->rowCount();
+
+            if ($rowCount <= 0) {
+                return false;
+            }
 
             return true;
         } catch (\PDOException $exception) {
