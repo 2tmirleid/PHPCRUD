@@ -155,6 +155,25 @@ class Users extends AbstractMethods
     }
 
     /**
+     * @param string $value
+     * @return array|bool
+     */
+    public function searchUserByValue(string $value): array|bool
+    {
+        try {
+            $query = "SELECT email, name, age FROM users WHERE email LIKE :value OR name LIKE :value OR age LIKE :value";
+
+            $q = $this->connection->prepare($query);
+            $q->execute(["value" => "%$value%"]);
+
+            return $q->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\PDOException $exception) {
+            error_log("Error while searching user: " . $exception->getMessage());
+            return false;
+        }
+    }
+
+    /**
      * @param array $filter
      * @return string
      */

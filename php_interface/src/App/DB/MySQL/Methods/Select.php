@@ -30,12 +30,12 @@ class Select
      * @param string $email
      * @return array
      */
-    public function selectUserByEmail(string $email): array // Это не смотри, я пока не доделал
+    public function selectUserByEmail(string $email): array
     {
         return $this->conn->select(select: ["email"], filter: ["email" => [$email]]);
     }
 
-    public function searchUserByValue(string $value): array
+    public function searchUserByValue(string $value): array // Это не смотри, я пока не доделал
     {
         return $this->conn->searchUserByValue(value: $value); // TODO validate values
     }
