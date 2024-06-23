@@ -69,7 +69,9 @@ class Users extends AbstractMethods
     {
         try {
             if (count($values) != 3) {
-                throw new \InvalidArgumentException("Error while creating user: The number of values does not match the number of fields");
+                throw new \InvalidArgumentException(
+                    "Error while creating user: The number of values does not match the number of fields"
+                );
             } else {
                 $sql = "INSERT INTO users (email, name, age) VALUES (?, ?, ?)";
 
@@ -95,18 +97,24 @@ class Users extends AbstractMethods
         $requiredProperties = ["email", "name", "age"];
         $query = "UPDATE users SET ";
 
-        $propertiesDiff = array_diff($properties, $requiredProperties);
 
-        if (!empty($propertiesDiff)) {
+        /**
+         * Тут не подойдет array_diff, т.к на изменение подается только одно поле, и разница между массивами будет всегда
+         */
+        foreach ($properties as $property) {
+            if (!in_array($property, $requiredProperties)) {
                 throw new \InvalidArgumentException(
                     "Error while updating user: invalid column name or count of properties and values does not match"
                 );
             }
+        }
 
         if (count($properties) === 1) {
             $implodedProps = array_shift($properties);
 
             $implodedProps .= " = ? ";
+            $query .= $implodedProps; // Забыли при дебаге добавить эту строку, без нее ничего не работало, была строка типа
+                                      // UPDATE users SET  WHERE id = ?;
         } else {
             $implodedProps = implode(" = ?, ", $properties);
 

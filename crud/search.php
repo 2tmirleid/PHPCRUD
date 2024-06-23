@@ -6,8 +6,10 @@ require_once $_SERVER["DOCUMENT_ROOT"] . "/crud/header.php";
 ?>
 
 <?php
+$select = Select::getInstance();
+
 $searchValue = $_GET["search"];
-$searchResults = Select::searchUserByValue(value: $searchValue);
+$searchResults = $select->searchUserByValue(value: $searchValue);
 ?>
 <main>
     <div class="container">
