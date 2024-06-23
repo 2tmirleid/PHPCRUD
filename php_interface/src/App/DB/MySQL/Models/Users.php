@@ -68,12 +68,12 @@ class Users extends AbstractMethods
     public function create(array $values): bool|PDOStatement
     {
         try {
-            if (count($values) != 3) {
+            if (count($values) != 4) {
                 throw new \InvalidArgumentException(
                     "Error while creating user: The number of values does not match the number of fields"
                 );
             } else {
-                $sql = "INSERT INTO users (email, name, age) VALUES (?, ?, ?)";
+                $sql = "INSERT INTO users (email, name, age, password) VALUES (?, ?, ?, ?)";
 
                 $query = $this->connection->prepare($sql);
                 $query->execute(array_map("trim", $values));

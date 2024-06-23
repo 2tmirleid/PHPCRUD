@@ -8,8 +8,8 @@ require_once $_SERVER["DOCUMENT_ROOT"] . "/crud/header.php";
 
 <main>
     <div class="container">
-        <h2>Добавить пользователя</h2>
-        <form action="create.php" method="POST" class="user-form">
+        <h2>Registration Form</h2>
+        <form class="user-form" action="register.php" method="POST">
             <div class="form-group">
                 <label for="email">Email:</label>
                 <input type="email" id="email" name="email" required>
@@ -22,32 +22,36 @@ require_once $_SERVER["DOCUMENT_ROOT"] . "/crud/header.php";
                 <label for="age">Age:</label>
                 <input type="number" id="age" name="age" required>
             </div>
-            <button type="submit" class="submit-btn">Создать</button>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="submit-btn">Register</button>
         </form>
     </div>
 </main>
 
 <?php
+$validator = new Validation();
+$create = Create::getInstance();
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $create = Create::getInstance();
-
-    $validator = new Validation();
-
     $email = $_POST["email"];
     $name = $_POST["name"];
     $age = intval($_POST["age"]);
+    $password = $_POST["password"];
 
-    $errors = $validator->validateForm(age: $age, email: $email);
+    $errors = $validator->validateForm(password: $password, age: $age, email: $email);
 
     if (!empty($errors)) {
         foreach ($errors as $error) {
             print $error;
         }
     } else {
-        $user = $create->createUser(email: $email, name: $name, age: $age);
+        $registerUser = $create->register(email: $email, name: $name, age: $age, password: $password);
 
-        if ($user) {
-            header("Location: index.php");
+        if ($registerUser) {
+            print "Success";
         } else {
             $error = "
                 <main>

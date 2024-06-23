@@ -14,11 +14,12 @@ class Validation
     }
 
     /**
+     * @param string|null $password
      * @param int|null $age
      * @param string|null $email
      * @return array
      */
-    public function validateForm(?int $age = null, ?string $email = null): array
+    public function validateForm(?string $password = null, ?int $age = null, ?string $email = null): array
     {
         $errors = [];
 
@@ -37,6 +38,16 @@ class Validation
         if (isset($age)) {
             if ($age < 18) {
                 $errors[] = "Sorry, you are too little for our website<br>";
+            }
+        }
+
+        if (isset($password)) {
+            if (strlen($password) > 16) {
+                $errors[] = "Password must be less then 16 chars<br>";
+            }
+
+            if (strlen($password) < 6) {
+                $errors[] = "Password must be more then 6 chars<br>";
             }
         }
 

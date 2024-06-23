@@ -22,13 +22,16 @@ class Create
      * @param string $email
      * @param string $name
      * @param int $age
+     * @param string $password
      * @return bool
      */
-    public function createUser(string $email, string $name, int $age): bool
+    public function register(string $email, string $name, int $age, string $password): bool
     {
         try {
-            $createUser = $this->conn->create([$email, $name, $age]);
-            $rowCount = $createUser->rowCount();
+            $hashPassword = password_hash($password, PASSWORD_DEFAULT);
+
+            $registerUser = $this->conn->create([$email, $name, $age, $hashPassword]);
+            $rowCount = $registerUser->rowCount();
 
             if ($rowCount <= 0) {
                 return false;
@@ -36,7 +39,7 @@ class Create
 
             return true;
         } catch (\PDOException $exception) {
-            error_log("Error while creating user: " . $exception->getMessage());
+            error_log("Error while register user: " . $exception->getMessage());
             return false;
         }
     }

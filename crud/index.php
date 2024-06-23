@@ -55,9 +55,6 @@ $users = $select->selectAllUsers();
             } ?>
             </tbody>
         </table>
-        <button class="add-btn">
-            <a href="create.php">Добавить</a>
-        </button>
     </div>
 </main>
 
