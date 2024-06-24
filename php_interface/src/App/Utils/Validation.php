@@ -53,4 +53,9 @@ class Validation
 
         return $errors;
     }
+
+    public function ValidateSession()
+    {
+        
+    }
 }
