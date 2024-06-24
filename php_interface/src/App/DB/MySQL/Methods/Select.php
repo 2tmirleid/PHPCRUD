@@ -44,4 +44,9 @@ class Select
     {
         return $this->conn->select(select: ["password"], filter: ["email" => [$email]]);
     }
+
+    public function selectEmailByID(int $userID): array
+    {
+        return $this->conn->select(select: ["email"], filter: ["id" => [$userID]]);
+    }
 }
