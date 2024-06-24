@@ -54,8 +54,21 @@ class Validation
         return $errors;
     }
 
-    public function ValidateSession()
+    public function VerifyLogin(string $email, string $password): array
     {
-        
+        $errors = [];
+
+        $emailExists = $this->select->selectUserByEmail(email: $email);
+        $hashPassword = $this->select->selectUserHashByEmail(email: $email);
+
+        if (empty($emailExists)) {
+            $errors[] = "User with this email doesn't exists<br>";
+        }
+
+        if (!password_verify($password, $hashPassword[0]["password"])) {
+            $errors[] = "Incorrect password<br>";
+        }
+
+        return $errors;
     }
 }

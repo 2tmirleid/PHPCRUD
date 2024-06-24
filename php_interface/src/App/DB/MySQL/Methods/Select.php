@@ -32,11 +32,16 @@ class Select
      */
     public function selectUserByEmail(string $email): array
     {
-        return $this->conn->select(select: ["email"], filter: ["email" => [$email]]);
+        return $this->conn->select(select: ["id", "email"], filter: ["email" => [$email]]);
     }
 
     public function searchUserByValue(string $value): array // Это не смотри, я пока не доделал
     {
         return $this->conn->searchUserByValue(value: $value); // TODO validate values
+    }
+
+    public function selectUserHashByEmail(string $email): array
+    {
+        return $this->conn->select(select: ["password"], filter: ["email" => [$email]]);
     }
 }

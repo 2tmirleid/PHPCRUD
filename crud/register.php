@@ -1,6 +1,7 @@
 <?php
 
 use App\DB\MySQL\Methods\Create;
+use App\DB\MySQL\Methods\Select;
 use App\Utils\Validation;
 
 require_once $_SERVER["DOCUMENT_ROOT"] . "/crud/header.php";
@@ -26,7 +27,8 @@ require_once $_SERVER["DOCUMENT_ROOT"] . "/crud/header.php";
                 <label for="password">Password:</label>
                 <input type="password" id="password" name="password" required>
             </div>
-            <button type="submit" class="submit-btn">Register</button>
+            <button type="submit" class="submit-btn">Sign up</button>
+            <a href="login.php">Already has account?</a>
         </form>
     </div>
 </main>
@@ -34,6 +36,7 @@ require_once $_SERVER["DOCUMENT_ROOT"] . "/crud/header.php";
 <?php
 $validator = new Validation();
 $create = Create::getInstance();
+$select = Select::getInstance();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST["email"];
@@ -51,7 +54,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $registerUser = $create->register(email: $email, name: $name, age: $age, password: $password);
 
         if ($registerUser) {
-            print "Success";
+            $user = $select->selectUserByEmail(email: $email);
+
+            $user_session_id = $user[0]["id"];
+
+            session_start();
+            $_SESSION["user_id"] = $user_session_id;
+
+            header("Location: index.php");
+            exit();
         } else {
             $error = "
                 <main>

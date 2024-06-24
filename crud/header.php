@@ -23,6 +23,7 @@ require_once $_SERVER["DOCUMENT_ROOT"] . "/php_interface/lib/vendor/autoload.php
 <?php
 session_start();
 
+
 $currentFile = basename($_SERVER['PHP_SELF']);
 
 $excludedPages = ['register.php', 'login.php'];
@@ -31,3 +32,4 @@ if (!in_array($currentFile, $excludedPages) && !isset($_SESSION["user_id"])) {
     header("Location: register.php");
     exit();
 }
+?>
