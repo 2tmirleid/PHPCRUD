@@ -37,7 +37,7 @@ class Validation
 
         if (isset($age)) {
             if ($age < 18) {
-                $errors[] = "Sorry, you are too little for our website<br>";
+                $errors[] = "Sorry, you are too young for our website<br>";
             }
         }
 
@@ -54,19 +54,19 @@ class Validation
         return $errors;
     }
 
-    public function VerifyLogin(string $email, string $password): array
+    /**
+     * @param string $email
+     * @param string $password
+     * @return array
+     */
+    public function verifyLogin(string $email, string $password): array
     {
         $errors = [];
 
-        $emailExists = $this->select->selectUserByEmail(email: $email);
-        $hashPassword = $this->select->selectUserHashByEmail(email: $email);
+        $user = $this->select->selectUserEmailAndHash(email: $email);
 
-        if (empty($emailExists)) {
-            $errors[] = "User with this email doesn't exists<br>";
-        }
-
-        if (!password_verify($password, $hashPassword[0]["password"])) {
-            $errors[] = "Incorrect password<br>";
+        if (empty($user["email"]) || !password_verify($password, $user["hash"])) {
+            $errors[] = "Email or password are incorrect<br>";
         }
 
         return $errors;

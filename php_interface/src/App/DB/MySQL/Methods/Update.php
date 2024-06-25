@@ -30,11 +30,7 @@ class Update
             $updateUser = $this->conn->update(properties: [$field], filter: ["id" => $filter], values: [$value]);
             $rowCount = $updateUser?->rowCount();
 
-            if ($rowCount <= 0) {
-                return false;
-            }
-
-            return true;
+            return boolval($rowCount);
         } catch (\Throwable $exception) {
             error_log("Error while updating user: " . $exception->getMessage());
         }

@@ -17,6 +17,9 @@ require_once $_SERVER["DOCUMENT_ROOT"] . "/php_interface/lib/vendor/autoload.php
     <header>
         <div class="container">
             <h1><a href="index.php">C.R.U.D.</a></h1>
+            <form action="logout.php" method="POST">
+                <button>Log out</button>
+            </form>
         </div>
     </header>
 
@@ -29,7 +32,6 @@ $currentFile = basename($_SERVER['PHP_SELF']);
 $excludedPages = ['register.php', 'login.php'];
 
 if (!in_array($currentFile, $excludedPages) && !isset($_SESSION["user_id"])) {
-    header("Location: register.php");
-    exit();
+    header("Location: login.php");
 }
 ?>

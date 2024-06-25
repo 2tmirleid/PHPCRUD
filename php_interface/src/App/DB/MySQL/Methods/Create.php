@@ -33,11 +33,7 @@ class Create
             $registerUser = $this->conn->create([$email, $name, $age, $hashPassword]);
             $rowCount = $registerUser->rowCount();
 
-            if ($rowCount <= 0) {
-                return false;
-            }
-
-            return true;
+            return boolval($rowCount);
         } catch (\PDOException $exception) {
             error_log("Error while register user: " . $exception->getMessage());
             return false;

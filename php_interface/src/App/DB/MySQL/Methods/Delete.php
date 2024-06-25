@@ -27,11 +27,7 @@ class Delete
             $deleteUser = $this->conn->delete(["id" => $id]);
             $rowCount = $deleteUser->rowCount();
 
-            if ($rowCount <= 0) {
-                return false;
-            }
-
-            return true;
+            return boolval($rowCount);
         } catch (\PDOException $exception) {
             error_log("Error while deleting user: " . $exception->getMessage());
             return false;

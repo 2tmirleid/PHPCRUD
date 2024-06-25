@@ -1,15 +1,12 @@
 <?php
+require_once $_SERVER["DOCUMENT_ROOT"] . "/crud/header.php";
 
 use App\DB\MySQL\Methods\Select;
-
-require_once $_SERVER["DOCUMENT_ROOT"] . "/crud/header.php";
 ?>
 
 <?php
-$select = Select::getInstance();
-
 $searchValue = $_GET["search"];
-$searchResults = $select->searchUserByValue(value: $searchValue);
+$searchResults = Select::getInstance()->searchUserByValue(value: $searchValue);
 ?>
 <main>
     <div class="container">
@@ -37,8 +34,6 @@ $searchResults = $select->searchUserByValue(value: $searchValue);
             ?>
             </tbody>
         </table>
-        <?php
-        ?>
         <h2>Users not found :(</h2>
         <?php
         }

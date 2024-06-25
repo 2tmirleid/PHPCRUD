@@ -1,8 +1,7 @@
 <?php
+require_once $_SERVER["DOCUMENT_ROOT"] . "/crud/header.php";
 
 use App\DB\MySQL\Methods\Select;
-
-require_once $_SERVER["DOCUMENT_ROOT"] . "/crud/header.php";
 ?>
 
 <?php

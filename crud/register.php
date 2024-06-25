@@ -1,10 +1,17 @@
 <?php
 
+require_once $_SERVER["DOCUMENT_ROOT"] . "/crud/header.php";
+
 use App\DB\MySQL\Methods\Create;
-use App\DB\MySQL\Methods\Select;
+use App\Utils\Authentication;
 use App\Utils\Validation;
 
-require_once $_SERVER["DOCUMENT_ROOT"] . "/crud/header.php";
+?>
+
+<?php
+if (isset($_SESSION["user_id"])) {
+    header("Location: index.php");
+}
 ?>
 
 <main>
@@ -13,15 +20,15 @@ require_once $_SERVER["DOCUMENT_ROOT"] . "/crud/header.php";
         <form class="user-form" action="register.php" method="POST">
             <div class="form-group">
                 <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
+                <input type="email" id="email" name="email" value="<?= $_POST["email"] ?>" required>
             </div>
             <div class="form-group">
                 <label for="name">Name:</label>
-                <input type="text" id="name" name="name" required>
+                <input type="text" id="name" name="name" value="<?= $_POST["name"] ?>" required>
             </div>
             <div class="form-group">
                 <label for="age">Age:</label>
-                <input type="number" id="age" name="age" required>
+                <input type="number" id="age" name="age" value="<?= $_POST["age"] ?>" required>
             </div>
             <div class="form-group">
                 <label for="password">Password:</label>
@@ -35,8 +42,6 @@ require_once $_SERVER["DOCUMENT_ROOT"] . "/crud/header.php";
 
 <?php
 $validator = new Validation();
-$create = Create::getInstance();
-$select = Select::getInstance();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST["email"];
@@ -51,28 +56,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             print $error;
         }
     } else {
-        $registerUser = $create->register(email: $email, name: $name, age: $age, password: $password);
+        $registerUser = Create::getInstance()->register(email: $email, name: $name, age: $age, password: $password);
 
         if ($registerUser) {
-            $user = $select->selectUserByEmail(email: $email);
-
-            $user_session_id = $user[0]["id"];
-
-            session_start();
-            $_SESSION["user_id"] = $user_session_id;
+            Authentication::authenticate($email);
 
             header("Location: index.php");
-            exit();
         } else {
-            $error = "
-                <main>
-                <div class='container'>
-                <h2>Smth went wrong...</h2>
-                </div>
-                </main>
-            ";
-
-            die($error);
+            include $_SERVER["DOCUMENT_ROOT"] . "/crud/error.php";
+            die();
         }
     }
 }

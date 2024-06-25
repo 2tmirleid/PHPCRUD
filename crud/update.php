@@ -1,25 +1,24 @@
 <?php
+require_once $_SERVER["DOCUMENT_ROOT"] . "/crud/header.php";
 
 use App\DB\MySQL\Methods\Update;
 use App\Utils\Validation;
-
-require_once $_SERVER["DOCUMENT_ROOT"] . "/crud/header.php";
 ?>
 
 <?php
 $userID = intval($_GET["id"]);
 
-//if (!intval($userID = $_GET["id"])) { С проверкой неувязочка получилась - она запускается не только при редиректе с главной, но и при выполнении скрипта, соответственно,
-//    $errorID = "                      ошибка есть всегда.
-//    <main>
-//    <div class='container'>
-//    <h2>ID can't be empty</h2>
-//    </div>
-//    </main>
-//    ";
-//
-//    die($errorID);
-//}
+if (!intval($userID = $_GET["id"])) {
+    $errorID = "                      
+    <main>
+    <div class='container'>
+    <h2>ID can't be empty</h2>
+    </div>
+    </main>
+    ";
+
+    die($errorID);
+}
 ?>
 
 <main>
@@ -79,15 +78,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($updateUser) {
             header("Location: index.php");
         } else {
-            $error = "
-                <main>
-                <div class='container'>
-                <h2>Smth went wrong...</h2>
-                </div>
-                </main>
-            ";
+            include $_SERVER["DOCUMENT_ROOT"] . "/crud/error.php";
 
-            die($error);
+            die();
         }
     }
 }

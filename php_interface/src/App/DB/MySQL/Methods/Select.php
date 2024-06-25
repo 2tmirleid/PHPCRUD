@@ -8,6 +8,7 @@ use App\DB\MySQL\Singleton;
 class Select
 {
     use Singleton;
+
     private $conn;
 
     private function __construct()
@@ -23,7 +24,6 @@ class Select
     public function selectAllUsers(): array
     {
         return $this->conn->select(select: ["id", "email", "name", "age"]);
-
     }
 
     /**
@@ -35,13 +35,27 @@ class Select
         return $this->conn->select(select: ["id", "email"], filter: ["email" => [$email]]);
     }
 
-    public function searchUserByValue(string $value): array // Это не смотри, я пока не доделал
-    {
-        return $this->conn->searchUserByValue(value: $value); // TODO validate values
+    /**
+     * @param string $value
+     * @return array
+     */
+    public function searchUserByValue(string $value): array // Не могу придумать, как можно валидировать значения для поиска
+    {                                                       // т.к я не знаю, по какому именно полю юзер будет искать :(
+        return $this->conn->searchUserByValue(value: $value);
     }
 
-    public function selectUserHashByEmail(string $email): array
+    /**
+     * @param string $email
+     * @return array
+     */
+    public function selectUserEmailAndHash(string $email): array
     {
-        return $this->conn->select(select: ["password"], filter: ["email" => [$email]]);
+        $userEmail = $this->conn->select(select: ["id", "email"], filter: ["email" => [$email]]);
+        $userHash = $this->conn->select(select: ["password"], filter: ["email" => [$email]]);
+
+        return [
+            "email" => $userEmail,
+            "hash" => $userHash
+        ];
     }
 }
