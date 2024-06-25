@@ -1,7 +1,4 @@
 <?php
-
-use App\DB\MySQL\Methods\Select;
-
 require_once $_SERVER["DOCUMENT_ROOT"] . "/php_interface/lib/vendor/autoload.php"
 ?>
 
@@ -19,10 +16,8 @@ if (!in_array($currentFile, $excludedPages) && !isset($_SESSION["user_id"])) {
 
 $email = null;
 
-if (isset($_SESSION["user_id"])) {
-    $select = Select::getInstance();
-
-    $email = $select->selectEmailByID(userID: intval($_SESSION["user_id"]));
+if (isset($_SESSION["user_email"])) {
+    $email = $_SESSION["user_email"];
 }
 ?>
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\DB\MySQL\Methods\Select;
+use App\Utils\Authentication;
 use App\Utils\Validation;
 
 require_once $_SERVER["DOCUMENT_ROOT"] . "/crud/header.php";
@@ -41,10 +42,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         $user = $select->selectUserByEmail(email: $email);
 
-        $user_session_id = $user[0]["id"];
+        $userSessionID = intval($user[0]["id"]);
+        $userSessionEmail = $user[0]["email"];
 
-        session_start();
-        $_SESSION["user_id"] = $user_session_id;
+        Authentication::authenticate(id: $userSessionID, email: $userSessionEmail);
 
         header("Location: index.php");
         exit();
