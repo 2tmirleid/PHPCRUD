@@ -39,8 +39,8 @@ class Select
      * @param string $value
      * @return array
      */
-    public function searchUserByValue(string $value): array // Не могу придумать, как можно валидировать значения для поиска
-    {                                                       // т.к я не знаю, по какому именно полю юзер будет искать :(
+    public function searchUserByValue(string $value): array
+    {
         return $this->conn->searchUserByValue(value: $value);
     }
 
@@ -53,9 +53,12 @@ class Select
         $userEmail = $this->conn->select(select: ["id", "email"], filter: ["email" => [$email]]);
         $userHash = $this->conn->select(select: ["password"], filter: ["email" => [$email]]);
 
+        $implodedEmail = array_shift($userEmail);
+        $implodedHash = array_shift($userHash);
+
         return [
-            "email" => $userEmail,
-            "hash" => $userHash
+            "email" => $implodedEmail["email"],
+            "hash" => $implodedHash["password"]
         ];
     }
 }

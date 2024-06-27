@@ -43,11 +43,11 @@ class Validation
 
         if (isset($password)) {
             if (strlen($password) > 16) {
-                $errors[] = "Password must be less then 16 chars<br>";
+                $errors[] = "Password must be less than 16 chars<br>";
             }
 
             if (strlen($password) < 6) {
-                $errors[] = "Password must be more then 6 chars<br>";
+                $errors[] = "Password must be more than 6 chars<br>";
             }
         }
 

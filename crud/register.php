@@ -41,9 +41,10 @@ if (isset($_SESSION["user_id"])) {
 </main>
 
 <?php
-$validator = new Validation();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $validator = new Validation();
+
     $email = $_POST["email"];
     $name = $_POST["name"];
     $age = intval($_POST["age"]);

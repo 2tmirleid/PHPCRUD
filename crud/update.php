@@ -1,23 +1,19 @@
 <?php
+
 require_once $_SERVER["DOCUMENT_ROOT"] . "/crud/header.php";
 
 use App\DB\MySQL\Methods\Update;
 use App\Utils\Validation;
+
 ?>
 
 <?php
 $userID = intval($_GET["id"]);
 
 if (!intval($userID = $_GET["id"])) {
-    $errorID = "                      
-    <main>
-    <div class='container'>
-    <h2>ID can't be empty</h2>
-    </div>
-    </main>
-    ";
-
-    die($errorID);
+    $errorMessage = "ID can't be empty";
+    include $_SERVER["DOCUMENT_ROOT"] . "/crud/error.php";
+    die();
 }
 ?>
 
@@ -69,7 +65,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         foreach ($errors as $error) {
             print "$error";
         }
-
     } else {
         $update = Update::getInstance();
 
@@ -79,7 +74,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             header("Location: index.php");
         } else {
             include $_SERVER["DOCUMENT_ROOT"] . "/crud/error.php";
-
             die();
         }
     }
