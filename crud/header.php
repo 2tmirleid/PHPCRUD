@@ -38,6 +38,6 @@ if (isset($_SESSION["user_email"])) {
         <h1><a href="index.php">C.R.U.D.</a></h1>
     </div>
     <div class="container">
-        <span><?= $email[0]["email"] ?></span>
+        <span><?= $email ?></span>
     </div>
 </header>
