@@ -1,0 +1,6 @@
+../../.idea
+.vscode
+.fleet
+logs
+.env
+php_interface/lib/vendor
