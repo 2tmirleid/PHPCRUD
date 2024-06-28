@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="fdd91ff0-071b-4f34-9ad7-c8554a94c8cf" name="PhpCRUD" url="http://localhost">
+        <fileTransfer mountedRoot="\\wsl$\Ubuntu\home\tutmirleid\PhpCRUD\www" accessType="MOUNT" port="0" />
+      </webServer>
+    </option>
+  </component>
+</project>
