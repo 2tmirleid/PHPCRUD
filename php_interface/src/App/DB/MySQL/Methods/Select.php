@@ -61,4 +61,9 @@ class Select
             "hash" => $implodedHash["password"]
         ];
     }
+
+    public function selectEmailByID(int $userID): array
+    {
+        return $this->conn->select(select: ["email"], filter: ["id" => [$userID]]);
+    }
 }

@@ -1,10 +1,10 @@
 <?php
 
-require_once $_SERVER["DOCUMENT_ROOT"] . "/crud/header.php";
-
 use App\DB\MySQL\Methods\Create;
 use App\Utils\Authentication;
 use App\Utils\Validation;
+
+require_once $_SERVER["DOCUMENT_ROOT"] . "/crud/header.php";
 
 ?>
 

@@ -1,6 +1,16 @@
 <?php
+require_once $_SERVER["DOCUMENT_ROOT"] . "/php_interface/lib/vendor/autoload.php"
+?>
 
-require_once $_SERVER["DOCUMENT_ROOT"] . "/php_interface/lib/vendor/autoload.php" ?>
+<?php
+session_start();
+
+$email = null;
+
+if (isset($_SESSION["user_email"])) {
+    $email = $_SESSION["user_email"];
+}
+?>
 
     <html lang="ru">
     <head>
@@ -17,6 +27,7 @@ require_once $_SERVER["DOCUMENT_ROOT"] . "/php_interface/lib/vendor/autoload.php
     <header>
         <div class="container">
             <h1><a href="index.php">C.R.U.D.</a></h1>
+            <span><?= $email ?></span>
             <?php
                 session_start();
 

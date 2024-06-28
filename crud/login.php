@@ -1,10 +1,9 @@
 <?php
 
-require_once $_SERVER["DOCUMENT_ROOT"] . "/crud/header.php";
-
-use App\Utils\Authentication;
 use App\Utils\Validation;
+use App\Utils\Authentication;
 
+require_once $_SERVER["DOCUMENT_ROOT"] . "/crud/header.php";
 ?>
 
 <?php
